@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>I’m Watching You</title>
+  <style>
+    :root {
+      --bg: #0b0f17;
+      --fg: #e6edf3;
+      --accent: #9b87f5;
+      --eye: #ffffff;
+      --pupil: #111827;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--fg);
+      background: radial-gradient(1200px 800px at 50% 30%, #111827 0%, var(--bg) 60%);
+      overflow: hidden;
+    }
+
+    .wrap {
+      height: 100%;
+      display: grid;
+      place-items: center;
+      position: relative;
+      padding: 2rem;
+    }
+
+    h1 {
+      position: absolute;
+      top: clamp(20px, 8vh, 80px);
+      left: 50%;
+      transform: translateX(-50%);
+      margin: 0;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      text-align: center;
+      font-size: clamp(24px, 5vw, 60px);
+      color: var(--fg);
+      text-shadow: 0 2px 18px rgba(0,0,0,.6);
+    }
+
+    .eyes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(18px, 3vw, 48px);
+      align-items: center;
+      justify-items: center;
+      width: min(90vw, 900px);
+      max-width: 100%;
+    }
+
+    .eye {
+      width: min(40vw, 360px);
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      background: radial-gradient(120% 120% at 35% 30%, #fff 0 60%, #f2f6ff 65%, #cbd5e1 100%);
+      box-shadow:
+        inset 0 -12px 24px rgba(0,0,0,.25),
+        inset 0 12px 24px rgba(255,255,255,.45),
+        0 24px 60px rgba(0,0,0,.5);
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    /* Eyelids for blink */
+    .eyelid {
+      position: absolute;
+      left: 0; right: 0;
+      height: 52%;
+      background: linear-gradient(#0f1629, #0b0f17);
+      z-index: 3;
+      transform-origin: center;
+      pointer-events: none;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.6));
+      animation: blink 6s infinite;
+    }
+    .eyelid.top { top: -52%; border-bottom-left-radius: 50% 40%; border-bottom-right-radius: 50% 40%; }
+    .eyelid.bot { bottom: -52%; border-top-left-radius: 50% 40%; border-top-right-radius: 50% 40%; }
+
+    @keyframes blink {
+      0%, 92%, 100% { transform: translateY(0); }
+      94% { transform: translateY(100%); }
+      96% { transform: translateY(0); }
+    }
+
+    .iris {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      z-index: 1;
+    }
+
+    .pupil {
+      width: 36%;
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      background: radial-gradient(110% 110% at 65% 35%, #1f2937 0 45%, #111827 60% 100%);
+      box-shadow:
+        inset 0 0 10px rgba(0,0,0,.6),
+        0 10px 18px rgba(0,0,0,.5);
+      position: absolute;
+      transform: translate3d(0,0,0);
+    }
+
+    .highlight {
+      position: absolute;
+      width: 22%;
+      aspect-ratio: 1/1;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.95), rgba(255,255,255,.2) 60%, transparent 70%);
+      mix-blend-mode: screen;
+      pointer-events: none;
+      opacity: .9;
+    }
+
+    /* Subtle hover cue on mobile taps or desktop */
+    .hint {
+      position: absolute;
+      bottom: clamp(16px, 4vh, 40px);
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: clamp(12px, 2.4vw, 16px);
+      opacity: .7;
+      letter-spacing: .06em;
+    }
+
+    /* Spotlight cursor effect */
+    .spotlight {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(220px 220px at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,.06), transparent 60%);
+      transition: background 80ms linear;
+      z-index: 10;
+    }
+
+    a.gh {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      text-decoration: none;
+      font-size: 12px;
+      background: rgba(255,255,255,.06);
+      padding: 6px 10px;
+      border-radius: 999px;
+      color: var(--fg);
+      border: 1px solid rgba(255,255,255,.12);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h2>I'm watching you 👀</h2>
+
+    <div class="eyes" id="eyes">
+      <div class="eye">
+        <div class="eyelid top"></div>
+        <div class="eyelid bot"></div>
+        <div class="iris">
+          <div class="pupil"></div>
+          <div class="highlight"></div>
+        </div>
+      </div>
+      <div class="eye">
+        <div class="eyelid top"></div>
+        <div class="eyelid bot"></div>
+        <div class="iris">
+          <div class="pupil"></div>
+          <div class="highlight"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hint">Move your mouse (or touch) and the eyes will follow.</div>
+    <div class="spotlight" id="spot"></div>
+  </div>
+
+  <script>
+    // Smooth pointer tracking
+    const state = {
+      x: innerWidth / 2,
+      y: innerHeight / 2,
+      tx: innerWidth / 2,
+      ty: innerHeight / 2
+    };
+
+    const spot = document.getElementById('spot');
+    const eyes = Array.from(document.querySelectorAll('.eye'));
+
+    function onMove(e) {
+      if (e.touches && e.touches[0]) {
+        state.tx = e.touches[0].clientX;
+        state.ty = e.touches[0].clientY;
+      } else {
+        state.tx = e.clientX;
+        state.ty = e.clientY;
+      }
+      // update spotlight CSS vars
+      spot.style.setProperty('--mx', state.tx + 'px');
+      spot.style.setProperty('--my', state.ty + 'px');
+    }
+
+    window.addEventListener('mousemove', onMove, { passive: true });
+    window.addEventListener('touchmove', onMove, { passive: true });
+
+    function clamp(v, min, max) { return Math.min(max, Math.max(min, v)); }
+
+    function updateEye(eye, px, py) {
+      const rect = eye.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+
+      // Vector from eye center to pointer
+      const dx = px - cx;
+      const dy = py - cy;
+
+      // Max travel for pupil from eye center (keep inside the eyeball)
+      const pupil = eye.querySelector('.pupil');
+      const highlight = eye.querySelector('.highlight');
+      const maxR = rect.width * 0.22; // 22% of eye radius
+
+      const dist = Math.hypot(dx, dy) || 1;
+      const ux = dx / dist;
+      const uy = dy / dist;
+      const travel = Math.min(dist, maxR);
+
+      const pxl = ux * travel;
+      const pyl = uy * travel;
+
+      pupil.style.transform = `translate(${pxl}px, ${pyl}px)`;
+      // place highlight slightly opposite for nice specular look
+      highlight.style.transform = `translate(${-pxl * 0.35}px, ${-pyl * 0.35}px)`;
+    }
+
+    // Animation loop with easing
+    function tick() {
+      // ease current position toward target
+      state.x += (state.tx - state.x) * 0.12;
+      state.y += (state.ty - state.y) * 0.12;
+
+      for (const eye of eyes) updateEye(eye, state.x, state.y);
+
+      requestAnimationFrame(tick);
+    }
+    tick();
+
+    // Accessibility: reduce motion preference
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (media.matches) {
+      // No easing; snap to position and slow blink
+      state.x = state.tx; state.y = state.ty;
+      document.querySelectorAll('.eyelid').forEach(l => l.style.animationDuration = '10s');
+    }
+
+    // Resize-safe: recenter when viewport changes
+    window.addEventListener('resize', () => {
+      state.x = innerWidth / 2; state.y = innerHeight / 2;
+      state.tx = state.x; state.ty = state.y;
+    });
+  </script>
+</body>
+</html>
